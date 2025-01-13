@@ -1,0 +1,47 @@
+.wysiwyg-display {
+  * {
+    font-size: 14px;
+    line-height: 1.75;
+    letter-spacing: -0.01em;
+  }
+
+  :where(p, ul, ol, pre, h1, h2, h3, h4, h5, h6, blockquote) {
+    margin: 1em 0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  :where(h1, h2, h3, h4, h5, h6) {
+    font-weight: 600;
+  }
+
+  :where(ul) {
+    list-style-type: disc;
+  }
+
+  :where(ol) {
+    list-style-type: decimal;
+  }
+
+  :where(ol, ul) {
+    padding-left: 1.25em;
+  }
+
+  :where(blockquote) {
+    padding-left: 1em;
+    font-style: italic;
+    border-left: 0.25em solid currentColor;
+  }
+
+  :where(a) {
+    text-decoration: none;
+    font-weight: 600;
+    word-break: break-all;
+  }
+}

@@ -1,0 +1,35 @@
+@import url("https://fonts.googleapis.com/css2?family=Saira+Stencil+One&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.saira-stencil-one-regular {
+  font-family: "Saira Stencil One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@layer base {
+  @font-face {
+    font-family: "EudoxusSans";
+    font-style: normal;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url("https://cdn.jsdelivr.net/gh/stijndevries/Eudoxus-Sans/Eudoxus-Sans-font/Variable/EudoxusSansGX.woff2")
+      format("woff2");
+  }
+}
+
+@layer components {
+  @keyframes sync-loader {
+    33% {
+      transform: translateY(10px);
+    }
+    66% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+}
