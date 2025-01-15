@@ -1,4 +1,3 @@
-import React, { useState, useRef } from 'react';
 import {
   Modal,
   ModalContent,
@@ -6,10 +5,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  Switch,
-  useDisclosure,
 } from '@nextui-org/react';
-import { useEffect } from 'react';
 import { useNavigate } from '@remix-run/react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 

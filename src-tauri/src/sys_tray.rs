@@ -1,6 +1,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use log::{error, info};
-use rust_i18n::t;
 use serde::Serialize;
 use sqlx::sqlite::SqlitePoolOptions;
 use sqlx::sqlite::SqliteRow;
@@ -9,13 +8,13 @@ use sqlx::Row;
 use std::env;
 use std::sync::Mutex;
 use tauri::menu::{
-    ContextMenu, IsMenuItem, Menu, MenuBuilder, MenuId, MenuItem, MenuItemBuilder,
-    PredefinedMenuItem, Submenu, SubmenuBuilder,
+    IsMenuItem, Menu, MenuBuilder, MenuId, MenuItem, MenuItemBuilder, PredefinedMenuItem,
+    SubmenuBuilder,
 };
 use tauri::Emitter;
 use tauri::WindowEvent;
 use tauri::{
-    tray::{MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent},
+    tray::{TrayIcon, TrayIconBuilder},
     AppHandle, Manager, Wry,
 };
 use tauri_plugin_clipboard_manager::ClipboardExt;
@@ -26,12 +25,10 @@ use crate::proxy;
 use crate::proxy::unset_global_proxy;
 use crate::proxy::unset_pac_proxy;
 use crate::v2ray_core;
-use crate::v2ray_core::stop_daemon;
 use crate::v2ray_core::DaemonState;
 use std::sync::Arc;
 
 use anyhow::Result;
-use directories::ProjectDirs;
 
 use crate::utils;
 use tauri::path::BaseDirectory;
@@ -660,6 +657,14 @@ pub async fn create_tray_menu(app: AppHandle, user_id: &str) -> Menu<Wry> {
             .build(&app)
             .unwrap();
 
+        let is_selected_endpoint: bool =
+            sqlx::query("SELECT COUNT(*) FROM Endpoints WHERE Active = 1")
+                .fetch_one(&pool)
+                .await
+                .map(|row: SqliteRow| row.get::<i32, _>(0))
+                .unwrap_or_else(|_| 0)
+                > 0;
+
         let toggle_service = MenuItemBuilder::new(format!(
             "Turn v2ray-core {}",
             if service_running_state == 1 {
@@ -668,6 +673,7 @@ pub async fn create_tray_menu(app: AppHandle, user_id: &str) -> Menu<Wry> {
                 "On"
             }
         ))
+        .enabled(is_selected_endpoint)
         .accelerator("CmdOrCtrl+T")
         .id("toggle-service")
         .build(&app)

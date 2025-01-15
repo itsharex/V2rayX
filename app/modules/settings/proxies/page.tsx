@@ -2,21 +2,10 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
-  Divider,
-  Link,
-  Image,
-  Button,
+  Listbox,
+  ListboxItem,
+  Chip,
 } from '@nextui-org/react';
-import { Listbox, ListboxItem } from '@nextui-org/react';
-import { Select, SelectItem } from '@nextui-org/react';
-import { Checkbox } from '@nextui-org/checkbox';
-import { Switch } from '@nextui-org/switch';
-import { Chip } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
-import { Tooltip } from '@nextui-org/tooltip';
-import { Tabs, Tab } from '@nextui-org/react';
-import { Textarea } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 
 export const Page = () => {
@@ -29,11 +18,16 @@ export const Page = () => {
         </CardHeader>
         <CardBody className="overflow-visible py-2">
           <Listbox aria-label="Actions">
-            <ListboxItem key="LatencyTestSettings" textValue="LatencyTestSettings">
+            <ListboxItem
+              key="LatencyTestSettings"
+              textValue="LatencyTestSettings"
+            >
               <div className="flex flex-row items-center justify-between">
                 <div>{t('Latency Test Settings')}</div>
                 <div>
-                  <Chip color="secondary">http://www.gstatic.com/generate_204</Chip>
+                  <Chip color="secondary">
+                    http://www.gstatic.com/generate_204
+                  </Chip>
                   <Chip color="secondary">3000</Chip>
                 </div>
               </div>

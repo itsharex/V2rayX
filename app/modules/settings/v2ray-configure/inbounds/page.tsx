@@ -1,40 +1,31 @@
-import React from 'react';
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   Button,
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
-  Divider,
-  Link,
-  Image,
   Tabs,
   Tab,
   useDisclosure,
+  Input,
 } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
-import { Select, SelectSection, SelectItem } from '@nextui-org/select';
+import { Select, SelectItem } from '@nextui-org/select';
 
-import { Listbox, ListboxItem } from '@nextui-org/react';
-import { Checkbox } from '@nextui-org/checkbox';
-import { Chip } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
-import { Tooltip } from '@nextui-org/tooltip';
 import { useLoaderData, useNavigate } from '@remix-run/react';
-import { Controller, type FieldErrors, useForm, SubmitHandler } from 'react-hook-form';
+import { Controller, useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import toast, { Toaster } from 'react-hot-toast';
-import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { queryInboundsSettings, updateInbounds } from '~/api';
 
 export const loader = async () => {
-  return await queryInboundsSettings({ userID: localStorage.getItem('userID')! });
+  return await queryInboundsSettings({
+    userID: localStorage.getItem('userID')!,
+  });
 };
 
 const InboudSettigTabContent = (props: {
@@ -102,7 +93,10 @@ const InboudSettigTabContent = (props: {
           <p className="font-bold uppercase">{props.Tag}</p>
         </CardHeader>
         <CardBody className="flex flex-col items-start justify-center">
-          <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex w-full flex-col gap-4"
+          >
             <Controller
               name="listen"
               control={control}
@@ -137,7 +131,9 @@ const InboudSettigTabContent = (props: {
                   label="Port"
                   type="number"
                   placeholder="Enter your Port"
-                  description={t('Please make sure the port is not in use and unique')}
+                  description={t(
+                    'Please make sure the port is not in use and unique',
+                  )}
                   ref={ref}
                   name={name}
                   value={value.toString()}
@@ -225,16 +221,32 @@ export function Page() {
       >
         <span className="i-feather-edit" /> {t('Edit')}
       </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl" backdrop="blur">
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        size="2xl"
+        backdrop="blur"
+      >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">{t('Inbounds Setting')}</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">
+                {t('Inbounds Setting')}
+              </ModalHeader>
               <ModalBody className="mb-10 flex w-full flex-col items-center justify-center">
                 <div className="-ml-28">
-                  <Tabs aria-label="Options" isVertical={true} disabledKeys={['api']}>
+                  <Tabs
+                    aria-label="Options"
+                    isVertical={true}
+                    disabledKeys={['api']}
+                  >
                     {data.V2rayConfigure.Inbounds.map(
-                      (inbound: { Protocol: string; Listen: string; Port: number; Tag: string }) => (
+                      (inbound: {
+                        Protocol: string;
+                        Listen: string;
+                        Port: number;
+                        Tag: string;
+                      }) => (
                         <Tab key={inbound.Tag} title={inbound.Tag}>
                           <InboudSettigTabContent {...inbound} />
                         </Tab>

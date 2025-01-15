@@ -1,13 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
   Button,
-  Card,
-  CardHeader,
-  CardBody,
   DropdownItem,
   DropdownTrigger,
   Dropdown,
@@ -15,21 +8,18 @@ import {
   Avatar,
 } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
-import {
-  queryUser,
-  updateAppStatus,
-  queryLanuage,
-  updateGeneralSettings,
-  updateProxyMode,
-} from '~/api';
-import { useNavigate, Link, json, useLoaderData, useLocation } from '@remix-run/react';
-import { User } from '~/api/types';
+import { updateAppStatus, updateProxyMode, Types } from '~/api';
+import { useNavigate, Link, useLocation } from '@remix-run/react';
 import { invoke } from '@tauri-apps/api/core';
 import toast from 'react-hot-toast';
-import { Types } from '~/api';
 import { motion } from 'framer-motion';
 
-type MenuItemType = { label: string; path: string; icon: string; isFolded: boolean };
+type MenuItemType = {
+  label: string;
+  path: string;
+  icon: string;
+  isFolded: boolean;
+};
 
 const menuData: Array<MenuItemType> = [
   {
@@ -69,9 +59,15 @@ const MenuItem = ({ label, path, icon, isFolded }: MenuItemType) => {
   const location = useLocation();
 
   return (
-    <Link className="flex h-8 max-w-[610px] flex-row items-center justify-center gap-2" to={path}>
+    <Link
+      className="flex h-8 max-w-[610px] flex-row items-center justify-center gap-2"
+      to={path}
+    >
       <span
-        className={icon + ` ${location.pathname === path ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
+        className={
+          icon +
+          ` ${location.pathname === path ? 'bg-gray-200 dark:bg-gray-700' : ''}`
+        }
       ></span>
 
       {isFolded || (
@@ -156,7 +152,11 @@ const AvatarButton = ({ user }: { user: Types.User }) => {
                 proxyMode: 'manual',
               });
               localStorage.removeItem('userID');
-              toast.success(t('V2ray-core stopped and proxy mode switched to manual successfully'));
+              toast.success(
+                t(
+                  'V2ray-core stopped and proxy mode switched to manual successfully',
+                ),
+              );
               await invoke('tray_update', {
                 userId: '',
               });
@@ -173,7 +173,13 @@ const AvatarButton = ({ user }: { user: Types.User }) => {
   );
 };
 
-export const MainNav = ({ isFolded = true, user }: { isFolded?: boolean; user: Types.User }) => {
+export const MainNav = ({
+  isFolded = true,
+  user,
+}: {
+  isFolded?: boolean;
+  user: Types.User;
+}) => {
   const [isFoldController, setIsFoldController] = useState(isFolded);
   return (
     <div className="flex flex-col items-center justify-center gap-8 px-4">

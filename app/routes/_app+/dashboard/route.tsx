@@ -17,12 +17,18 @@ import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { invoke } from '@tauri-apps/api/core';
-import { queryBypass, queryDashboard, queryPAC, updateAutoLaunch, updateProxyMode } from '~/api';
-import { event, window, path } from '@tauri-apps/api';
+import {
+  queryBypass,
+  queryDashboard,
+  queryPAC,
+  updateAutoLaunch,
+  updateProxyMode,
+} from '~/api';
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react';
 import { listen } from '@tauri-apps/api/event';
 import { checkForAppUpdates } from '~/utils/utils';
 import { platform } from '@tauri-apps/plugin-os';
+import { UPDATER_ACTIVE } from '~/api';
 
 // Format Uptime Function
 function formatUptime(totalSeconds: number) {
@@ -76,7 +82,7 @@ const Page = () => {
 
   useEffect(() => {
     // Only proceed if autoCheckUpdate is true
-    if (!data.autoCheckUpdate) return;
+    if (!data.autoCheckUpdate && UPDATER_ACTIVE) return;
 
     const now = Date.now();
     const lastCheckTime = localStorage.getItem('lastCheckTime');
@@ -105,7 +111,10 @@ const Page = () => {
           <p className="font-bold uppercase">V2rayX</p>
           <NumberFlowGroup>
             <div
-              style={{ fontVariantNumeric: 'tabular-nums', '--number-flow-char-height': '0.85em' }}
+              style={{
+                fontVariantNumeric: 'tabular-nums',
+                '--number-flow-char-height': '0.85em',
+              }}
               className="~text-3xl/4xl flex items-baseline font-semibold text-default-500"
             >
               <NumberFlow
@@ -153,7 +162,9 @@ const Page = () => {
                             `
                             : `export http_proxy=socks5://${inbound.listen}:${inbound.port};export https_proxy=socks5://${inbound.listen}:${inbound.port};`;
                         await writeText(command);
-                        toast.success(`${command} ${t('Command has been pasted to clipboard')}`);
+                        toast.success(
+                          `${command} ${t('Command has been pasted to clipboard')}`,
+                        );
                       }}
                     >
                       {inbound.port}
@@ -181,7 +192,9 @@ const Page = () => {
                                set HTTPS_PROXY=http://${inbound.listen}:${inbound.port}`
                             : `export http_proxy=http://${inbound.listen}:${inbound.port};export https_proxy=http://${inbound.listen}:${inbound.port};`;
                         await writeText(command);
-                        toast.success(`${command} ${t('Command has been pasted to clipboard')}`);
+                        toast.success(
+                          `${command} ${t('Command has been pasted to clipboard')}`,
+                        );
                       }}
                     >
                       {inbound.port}
@@ -249,7 +262,8 @@ const Page = () => {
                             host: data.http[0].listen,
                             httpPort: data.http[0].port,
                             socksPort: data.socks[0].port,
-                            bypassDomains: JSON.parse(data.BypassDomains).bypass,
+                            bypassDomains: JSON.parse(data.BypassDomains)
+                              .bypass,
                           });
                           toast.success(t('Global mode has been enabled'));
                           break;

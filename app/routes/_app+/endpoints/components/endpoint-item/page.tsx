@@ -1,7 +1,7 @@
-import { Accordion, AccordionItem, Avatar, Button, Chip } from '@nextui-org/react';
+import { Avatar, Button, Chip } from '@nextui-org/react';
 import * as Share from './share-popover';
 import * as More from './more-popover';
-import { motion, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 import * as Types from '~/api/types';
 import { updateAppStatus } from '~/api';
 import { invoke } from '@tauri-apps/api/core';
@@ -44,7 +44,10 @@ export const Page = (props: {
             <Chip color="primary" size="sm">
               {props.endpoint.Security}
             </Chip>
-            <Chip color={props.endpoint.Latency ? 'success' : 'danger'} size="sm">
+            <Chip
+              color={props.endpoint.Latency ? 'success' : 'danger'}
+              size="sm"
+            >
               {`${props.endpoint.Latency ? `(${props.endpoint.Latency}ms)` : 'Timeout'}`}
             </Chip>
           </div>
@@ -83,7 +86,9 @@ export const Page = (props: {
             color="primary"
             aria-label={state ? 'Stop' : 'Start'}
             onPress={async () => {
-              const success = await invoke(state ? 'stop_daemon' : 'start_daemon');
+              const success = await invoke(
+                state ? 'stop_daemon' : 'start_daemon',
+              );
               if (success) {
                 await updateAppStatus({
                   userID: localStorage.getItem('userID')!,

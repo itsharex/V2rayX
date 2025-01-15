@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Modal,
   ModalContent,
@@ -7,15 +7,13 @@ import {
   ModalFooter,
   Button,
   Switch,
-  useDisclosure,
 } from '@nextui-org/react';
 import * as EditComponent from './components';
-import { useEffect } from 'react';
-import { useNavigate, useLoaderData } from '@remix-run/react';
+import { useNavigate } from '@remix-run/react';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import Editor from '~/modules/MonacoEditorComponent';
 
-import { queryEndpoint, queryLanuage } from '~/api';
+import { queryEndpoint } from '~/api';
 import { invoke } from '@tauri-apps/api/core';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -72,7 +70,9 @@ const Dialog = NiceModal.create(
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">{t('Configure Endpoint')}</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">
+                {t('Configure Endpoint')}
+              </ModalHeader>
               <ModalBody>
                 <div className="flex flex-row items-center justify-between">
                   <p>{`${t('Mode')}: ${mode === 'gui' ? t('GUI') : t('Editor')}`}</p>

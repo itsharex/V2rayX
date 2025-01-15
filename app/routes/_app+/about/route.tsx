@@ -1,9 +1,10 @@
-import { Card, CardBody, Button } from '@nextui-org/react';
+import { Card, CardBody, Button, Chip } from '@nextui-org/react';
 import { openUrl } from '@tauri-apps/plugin-opener';
-
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 import { checkForAppUpdates } from '~/utils/utils';
+import { APP_VERSION } from '~/api';
 
 const Page = () => {
   const { t, i18n } = useTranslation();
@@ -20,17 +21,27 @@ const Page = () => {
     >
       <Card className="py-4">
         <CardBody className="bg-container overflow-visible py-8">
-          <div className="flex flex-col items-center justify-center gap-8">
+          <div className="flex flex-col items-center justify-center gap-4">
             <div>
               <span className="i-custom-v2ray-logo h-32 w-32" />
             </div>
+            <Chip color="primary">
+              <p className="mb-0.5">{`v${APP_VERSION}`}</p>
+            </Chip>
             <p className="cursor-pointer">
-              {t('An all platform (Macos Windows Linux) V2ray client build with Tauri.')}
+              {t(
+                'An all platform (Macos Windows Linux) V2ray client build with Tauri.',
+              )}
             </p>
             <div className="flex flex-row gap-4">
               <Button
                 onPress={async () => {
-                  await checkForAppUpdates(t, true);
+                  const res = await checkForAppUpdates(t, true);
+                  if (!res) {
+                    toast.error(
+                      'This software architecture does not support internal auto update.',
+                    );
+                  }
                 }}
                 color="primary"
               >
@@ -54,7 +65,9 @@ const Page = () => {
               </Button>
               <Button
                 onPress={async () => {
-                  await openUrl('https://github.com/shaonhuang/V2rayX#ii-features');
+                  await openUrl(
+                    'https://github.com/shaonhuang/V2rayX#ii-features',
+                  );
                 }}
                 color="primary"
               >

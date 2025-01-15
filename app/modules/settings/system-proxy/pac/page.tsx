@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import {
   Modal,
   ModalContent,
@@ -7,33 +7,15 @@ import {
   ModalFooter,
   Button,
   Card,
-  CardHeader,
   CardBody,
-  CardFooter,
-  Divider,
-  Link,
-  Image,
-  Tabs,
-  Tab,
   useDisclosure,
 } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
-import { Select, SelectSection, SelectItem } from '@nextui-org/select';
 
-import { Listbox, ListboxItem } from '@nextui-org/react';
-import { Checkbox } from '@nextui-org/checkbox';
-import { Chip } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
-import { Tooltip } from '@nextui-org/tooltip';
-import { useLoaderData, useRevalidator, useNavigate } from '@remix-run/react';
-import { Controller, type FieldErrors, useForm, SubmitHandler } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import toast, { Toaster } from 'react-hot-toast';
-import { useEffect, useState } from 'react';
-import { queryPAC, updatePAC, Types, queryDashboard } from '~/api';
+import { useLoaderData, useRevalidator } from '@remix-run/react';
+import toast from 'react-hot-toast';
+import { queryPAC, updatePAC, queryDashboard } from '~/api';
 import EditorComponent from '~/modules/MonacoEditorComponent';
-import * as _ from 'lodash';
 import { invoke } from '@tauri-apps/api/core';
 
 export const loader = async () => {
@@ -86,11 +68,18 @@ export function Page() {
       >
         <span className="i-feather-edit" /> {t('Edit')}
       </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl" backdrop="blur">
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        size="3xl"
+        backdrop="blur"
+      >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">{t('PAC settings')}</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">
+                {t('PAC settings')}
+              </ModalHeader>
               <ModalBody className="flex w-full flex-col items-center justify-center px-8">
                 <Card>
                   <CardBody className="gap-8 p-4">

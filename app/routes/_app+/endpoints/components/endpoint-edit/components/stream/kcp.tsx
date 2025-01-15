@@ -1,45 +1,30 @@
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Divider,
-  Link,
-  Image,
-  Button,
-} from '@nextui-org/react';
-import { Listbox, ListboxItem } from '@nextui-org/react';
-import { Select, SelectItem } from '@nextui-org/react';
+import { Card, CardBody, Select, SelectItem, Input } from '@nextui-org/react';
 import { Checkbox } from '@nextui-org/checkbox';
-import { Switch } from '@nextui-org/switch';
-import { Chip } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
 import { Tooltip } from '@nextui-org/tooltip';
-import { Tabs, Tab } from '@nextui-org/react';
-import { Textarea } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from '@remix-run/react';
-import { useNavigate } from '@remix-run/react';
 import {
   Controller,
-  type FieldErrors,
   useForm,
   SubmitHandler,
   UseFormSetValue,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import toast, { Toaster } from 'react-hot-toast';
 import {
-  ReactNode,
-  useEffect,
   useState,
   useImperativeHandle,
   forwardRef,
   ForwardRefRenderFunction,
 } from 'react';
 import { addKcpStream, updateKcpStream } from '~/api';
-const protocols = ['none', 'srtp', 'utp', 'dtls', 'wireguard', 'wechat-video'].map((procotol) => ({
+const protocols = [
+  'none',
+  'srtp',
+  'utp',
+  'dtls',
+  'wireguard',
+  'wechat-video',
+].map((procotol) => ({
   key: procotol,
   label: procotol,
 }));
@@ -50,10 +35,18 @@ const KcpSchema = z.object({
   tti: z.number().positive({ message: 'TTI is required' }),
   header: z.string().min(1, { message: 'Header is required' }),
   congestion: z.boolean(),
-  uplinkCapacity: z.number().positive({ message: 'Uplink Capacity is required' }),
-  downlinkCapacity: z.number().positive({ message: 'Downlink Capacity is required' }),
-  readBufferSize: z.number().positive({ message: 'Read Buffer Size is required' }),
-  writeBufferSize: z.number().positive({ message: 'Write Buffer Size is required' }),
+  uplinkCapacity: z
+    .number()
+    .positive({ message: 'Uplink Capacity is required' }),
+  downlinkCapacity: z
+    .number()
+    .positive({ message: 'Downlink Capacity is required' }),
+  readBufferSize: z
+    .number()
+    .positive({ message: 'Read Buffer Size is required' }),
+  writeBufferSize: z
+    .number()
+    .positive({ message: 'Write Buffer Size is required' }),
 });
 
 type KcpSchema = z.infer<typeof KcpSchema>;
@@ -71,7 +64,10 @@ export interface PageRef {
   setFormValue: UseFormSetValue<KcpSchema>;
 }
 
-const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref) => {
+const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (
+  props,
+  ref,
+) => {
   const { t } = useTranslation();
 
   const headers = [
@@ -175,7 +171,10 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
   return (
     <Card>
       <CardBody>
-        <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit(onSubmit, onError)}
+          className="flex flex-col gap-4"
+        >
           <p>Stream Setting</p>
           <Controller
             name="endpointID"
@@ -183,7 +182,9 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
             render={({
               field: { name, value, onChange, onBlur, ref },
               fieldState: { invalid, error },
-            }) => <Input ref={ref} name={name} type="text" className="hidden" />}
+            }) => (
+              <Input ref={ref} name={name} type="text" className="hidden" />
+            )}
           />
           <div className="flex flex-row items-center gap-4">
             <Controller

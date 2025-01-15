@@ -1,8 +1,8 @@
 import Database from '@tauri-apps/plugin-sql';
 import { v7 as uuid } from 'uuid';
-import { encode, decode } from 'js-base64';
+import { encode } from 'js-base64';
 import * as Types from './types';
-import { appCacheDir, appLogDir, appDataDir } from '@tauri-apps/api/path';
+import { appLogDir } from '@tauri-apps/api/path';
 import * as yaml from 'js-yaml';
 import _ from 'lodash';
 import * as path from '@tauri-apps/api/path';
@@ -11,9 +11,11 @@ import {
   isEnabled as autoStartIsEnabled,
   disable as autoStartDisable,
 } from '@tauri-apps/plugin-autostart';
-import toast from 'react-hot-toast';
-export const V2RAY_CORE_VERSION = import.meta.env.VITE_V2RAY_CORE_VERSION;
-export const APP_VERSION = import.meta.env.VITE_APP_VERSION;
+export const V2RAY_CORE_VERSION: string = import.meta.env
+  .VITE_V2RAY_CORE_VERSION;
+export const APP_VERSION: string = import.meta.env.VITE_APP_VERSION;
+export const UPDATER_ACTIVE: boolean =
+  import.meta.env.VITE_UPDATER_ACTIVE === 'true';
 
 const initDb = async (maxRetries = 5, retryDelay = 1000) => {
   return await Database.load('sqlite:database.db');
@@ -24,7 +26,10 @@ export const testApi = async () => {
   return await db.select('SELECT * FROM User');
 };
 
-export const register = async (props: { username: string; password: string }) => {
+export const register = async (props: {
+  username: string;
+  password: string;
+}) => {
   const { username, password } = props;
   const db = await initDb();
   const appLogFolder = await appLogDir();
@@ -188,12 +193,17 @@ export const login = async (props: { username: string; password: string }) => {
   );
 };
 
-export const updateAppStatus = async (props: { userID: string; data: Partial<Types.AppStatus> }) => {
+export const updateAppStatus = async (props: {
+  userID: string;
+  data: Partial<Types.AppStatus>;
+}) => {
   const db = await initDb();
   const { data, userID } = props;
 
   // Filter out undefined keys and prepare parts for SQL statement
-  const entries = Object.entries(data).filter(([, value]) => value !== undefined);
+  const entries = Object.entries(data).filter(
+    ([, value]) => value !== undefined,
+  );
   if (entries.length === 0) return; // Exit if no data to update
 
   // Prepare SQL query parts
@@ -210,10 +220,14 @@ export const updateAppStatus = async (props: { userID: string; data: Partial<Typ
 export const queryUser = async (props: { userID: string }) => {
   const { userID } = props;
   const db = await initDb();
-  return await db.select<Types.User[]>('SELECT * FROM User WHERE UserID = ?', [userID]);
+  return await db.select<Types.User[]>('SELECT * FROM User WHERE UserID = ?', [
+    userID,
+  ]);
 };
 
-export const queryDashboard = async (props: { userID: string }): Promise<Types.DashboardData> => {
+export const queryDashboard = async (props: {
+  userID: string;
+}): Promise<Types.DashboardData> => {
   const { userID } = props;
   const db = await initDb();
   const results = await db.select<
@@ -244,12 +258,23 @@ export const queryDashboard = async (props: { userID: string }): Promise<Types.D
   const proxyMode = results[0]?.ProxyMode;
   const v2rayCoreVersion = results[0]?.V2rayCoreVersion;
   const AutoDownloadAndInstallUpgrades: number = (
-    await db.select<Types.AppSettings[]>('SELECT * FROM AppSettings WHERE UserID = ?', [userID])
+    await db.select<Types.AppSettings[]>(
+      'SELECT * FROM AppSettings WHERE UserID = ?',
+      [userID],
+    )
   )[0].AutoDownloadAndInstallUpgrades;
 
   return {
-    http: groupedByProtocol['http']?.map((p) => ({ listen: p.Listen, port: p.Port })) || [],
-    socks: groupedByProtocol['socks']?.map((p) => ({ listen: p.Listen, port: p.Port })) || [],
+    http:
+      groupedByProtocol['http']?.map((p) => ({
+        listen: p.Listen,
+        port: p.Port,
+      })) || [],
+    socks:
+      groupedByProtocol['socks']?.map((p) => ({
+        listen: p.Listen,
+        port: p.Port,
+      })) || [],
     autoLaunch,
     proxyMode,
     v2rayCoreVersion,
@@ -257,7 +282,10 @@ export const queryDashboard = async (props: { userID: string }): Promise<Types.D
   };
 };
 
-export const updateAutoLaunch = async (props: { userID: string; autoLaunch: boolean }) => {
+export const updateAutoLaunch = async (props: {
+  userID: string;
+  autoLaunch: boolean;
+}) => {
   const db = await initDb();
   await (props.autoLaunch ? autoStartEnable() : autoStartDisable());
   await db.execute('UPDATE AppSettings SET AutoLaunch = ? WHERE UserID = ?', [
@@ -266,7 +294,10 @@ export const updateAutoLaunch = async (props: { userID: string; autoLaunch: bool
   ]);
 };
 
-export const updateProxyMode = async (props: { userID: string; proxyMode: string }) => {
+export const updateProxyMode = async (props: {
+  userID: string;
+  proxyMode: string;
+}) => {
   const db = await initDb();
   await db.execute('UPDATE AppSettings SET ProxyMode = ? WHERE UserID = ?', [
     props.proxyMode,
@@ -274,21 +305,28 @@ export const updateProxyMode = async (props: { userID: string; proxyMode: string
   ]);
 };
 
-export const queryAppStatus = async (props: { userID: string }): Promise<Types.AppStatus[]> => {
+export const queryAppStatus = async (props: {
+  userID: string;
+}): Promise<Types.AppStatus[]> => {
   const db = await initDb();
-  return await db.select<Types.AppStatus[]>('SELECT * FROM AppStatus WHERE UserID = ?', [
-    props.userID,
-  ]);
+  return await db.select<Types.AppStatus[]>(
+    'SELECT * FROM AppStatus WHERE UserID = ?',
+    [props.userID],
+  );
 };
 
 export const queryGeneralSettings = async (props: {
   userID: string;
 }): Promise<Types.GeneralSettings> => {
   const db = await initDb();
-  const res = await db.select<Types.AppSettings[]>('SELECT * FROM AppSettings WHERE UserID = ?', [
-    props.userID,
-  ]);
-  const logRes = await db.select<Types.Log[]>('SELECT * FROM Log WHERE UserID = ?', [props.userID]);
+  const res = await db.select<Types.AppSettings[]>(
+    'SELECT * FROM AppSettings WHERE UserID = ?',
+    [props.userID],
+  );
+  const logRes = await db.select<Types.Log[]>(
+    'SELECT * FROM Log WHERE UserID = ?',
+    [props.userID],
+  );
   return {
     autoStartProxy: res[0].AutoStartProxy === 1,
     allowSystemNotifications: res[0].AllowSystemNotifications === 1,
@@ -332,7 +370,12 @@ export const queryAppearance = async (props: {
 }> => {
   const db = await initDb();
   const res = await db.select<
-    { HideTrayBar: number; Font: string; DarkMode: number; FollowSystemTheme: number }[]
+    {
+      HideTrayBar: number;
+      Font: string;
+      DarkMode: number;
+      FollowSystemTheme: number;
+    }[]
   >('SELECT * FROM AppSettings WHERE UserID = ?', [props.userID]);
   if (!res.length) {
     return {
@@ -342,13 +385,21 @@ export const queryAppearance = async (props: {
     };
   }
   return {
-    theme: res[0].FollowSystemTheme === 1 ? 'system' : res[0].DarkMode === 1 ? 'dark' : 'light',
+    theme:
+      res[0].FollowSystemTheme === 1
+        ? 'system'
+        : res[0].DarkMode === 1
+          ? 'dark'
+          : 'light',
     font: res[0].Font,
     hideTrayBar: res[0].HideTrayBar === 1,
   };
 };
 
-export const updateAppearance = async (props: { userID: string; appearance: Types.Appearance }) => {
+export const updateAppearance = async (props: {
+  userID: string;
+  appearance: Types.Appearance;
+}) => {
   const appearance = props.appearance;
   const db = await initDb();
   await db.execute(
@@ -363,7 +414,9 @@ export const updateAppearance = async (props: { userID: string; appearance: Type
   );
 };
 
-export const queryInboundsSettings = async (props: { userID: string }): Promise<Types.Inbound[]> => {
+export const queryInboundsSettings = async (props: {
+  userID: string;
+}): Promise<Types.Inbound[]> => {
   const db = await initDb();
   const res = (await db.select('SELECT * FROM Inbounds WHERE UserID = ?', [
     props.userID,
@@ -379,7 +432,9 @@ export const updateInbounds = async (props: {
 
   for (const inbound of props.inbounds) {
     // Construct the SQL query dynamically based on provided fields
-    const entries = Object.entries(inbound).filter(([key]) => key !== 'UserID' && key !== 'ID');
+    const entries = Object.entries(inbound).filter(
+      ([key]) => key !== 'UserID' && key !== 'ID',
+    );
     if (entries.length === 0) continue; // Skip if no fields to update
 
     const setClause = entries.map(([key]) => `${key} = ?`).join(', ');
@@ -390,27 +445,40 @@ export const updateInbounds = async (props: {
   }
 };
 
-export const queryDNS = async (props: { userID: string }): Promise<Types.DNS> => {
+export const queryDNS = async (props: {
+  userID: string;
+}): Promise<Types.DNS> => {
   const db = await initDb();
-  const res = (await db.select('SELECT * FROM DNS WHERE UserID = ?', [props.userID])) as Types.DNS[];
+  const res = (await db.select('SELECT * FROM DNS WHERE UserID = ?', [
+    props.userID,
+  ])) as Types.DNS[];
   return res[0];
 };
 
 export const updateDNS = async (props: { userID: string; dns: string }) => {
   const db = await initDb();
   const dns = props.dns;
-  db.execute('UPDATE DNS SET Value = ? WHERE UserID = ?', [props.dns, props.userID]);
+  db.execute('UPDATE DNS SET Value = ? WHERE UserID = ?', [
+    props.dns,
+    props.userID,
+  ]);
 };
 
-export const queryBypass = async (props: { userID: string }): Promise<Types.BypassDomains> => {
+export const queryBypass = async (props: {
+  userID: string;
+}): Promise<Types.BypassDomains> => {
   const db = await initDb();
-  const res = (await db.select('SELECT BypassDomains FROM AppSettings WHERE UserID = ?', [
-    props.userID,
-  ])) as Types.BypassDomains[];
+  const res = (await db.select(
+    'SELECT BypassDomains FROM AppSettings WHERE UserID = ?',
+    [props.userID],
+  )) as Types.BypassDomains[];
   return res[0];
 };
 
-export const updateBypass = async (props: { userID: string; bypass: string }) => {
+export const updateBypass = async (props: {
+  userID: string;
+  bypass: string;
+}) => {
   const db = await initDb();
   db.execute('UPDATE AppSettings SET BypassDomains = ? WHERE UserID = ?', [
     props.bypass,
@@ -418,7 +486,9 @@ export const updateBypass = async (props: { userID: string; bypass: string }) =>
   ]);
 };
 
-export const queryPAC = async (props: { userID: string }): Promise<Types.PAC> => {
+export const queryPAC = async (props: {
+  userID: string;
+}): Promise<Types.PAC> => {
   const db = await initDb();
   const res = (await db.select('SELECT PAC FROM AppSettings WHERE UserID = ?', [
     props.userID,
@@ -428,7 +498,10 @@ export const queryPAC = async (props: { userID: string }): Promise<Types.PAC> =>
 
 export const updatePAC = async (props: { userID: string; pac: string }) => {
   const db = await initDb();
-  db.execute('UPDATE AppSettings SET PAC = ? WHERE UserID = ?', [props.pac, props.userID]);
+  db.execute('UPDATE AppSettings SET PAC = ? WHERE UserID = ?', [
+    props.pac,
+    props.userID,
+  ]);
 };
 
 export const addEndpointToLocalsBaseInfo = async (props: {
@@ -575,9 +648,10 @@ export const updateVmess = async (props: {
   const { address, port, alterID, security, level, uuid } = vmess;
 
   const vnextID = (
-    await db.select<{ VnextID: string }[]>(`SELECT VnextID FROM VmessVnext WHERE EndpointID = ?;`, [
-      endpointID,
-    ])
+    await db.select<{ VnextID: string }[]>(
+      `SELECT VnextID FROM VmessVnext WHERE EndpointID = ?;`,
+      [endpointID],
+    )
   )[0].VnextID;
 
   await db.execute(
@@ -590,7 +664,18 @@ export const updateVmess = async (props: {
     SET UUID = ?, AlterID = ?, Security = ?, Level = ?
     WHERE EndpointID = ? AND VnextID = ?;
     `,
-    [address, port, endpointID, vnextID, uuid, alterID, security, level, endpointID, vnextID],
+    [
+      address,
+      port,
+      endpointID,
+      vnextID,
+      uuid,
+      alterID,
+      security,
+      level,
+      endpointID,
+      vnextID,
+    ],
   );
 };
 
@@ -1040,7 +1125,8 @@ export const addHysteria2Stream = async (props: {
 }) => {
   const db = await initDb();
   const endpointID = props.endpointID;
-  const { password, type, uploadSpeed, downloadSpeed, enableUDP } = props.hysteria2;
+  const { password, type, uploadSpeed, downloadSpeed, enableUDP } =
+    props.hysteria2;
   await db.execute(
     `
     INSERT INTO Hysteria2Settings (
@@ -1296,7 +1382,9 @@ export const updateEndpointsGroups = async (props: {
   const { data, groupID } = props;
 
   // Filter out undefined keys and prepare parts for SQL statement
-  const entries = Object.entries(data).filter(([, value]) => value !== undefined);
+  const entries = Object.entries(data).filter(
+    ([, value]) => value !== undefined,
+  );
   if (entries.length === 0) return; // Exit if no data to update
 
   // Prepare SQL query parts
@@ -1325,32 +1413,68 @@ export const queryEndpoints = async (props: { groupID: string }) => {
 
 export const deleteEndpoint = async (props: { endpointID: string }) => {
   const db = await initDb();
-  await db.execute('DELETE FROM StreamSettings WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM Outbounds WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM Endpoints WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM VmessUsers WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM VmessVnext WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM Shadowsocks WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM TrojanServers WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM Hysteria2 WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM "Http/2Settings" WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM KcpSettings WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM QuicSettings WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM TcpSettings WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM WsSettings WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM GrpcSettings WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM Hysteria2Settings WHERE EndpointID = ?', [props.endpointID]);
-  await db.execute('DELETE FROM TlsSettings WHERE EndpointID = ?', [props.endpointID]);
+  await db.execute('DELETE FROM StreamSettings WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM Outbounds WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM Endpoints WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM VmessUsers WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM VmessVnext WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM Shadowsocks WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM TrojanServers WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM Hysteria2 WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM "Http/2Settings" WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM KcpSettings WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM QuicSettings WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM TcpSettings WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM WsSettings WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM GrpcSettings WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM Hysteria2Settings WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
+  await db.execute('DELETE FROM TlsSettings WHERE EndpointID = ?', [
+    props.endpointID,
+  ]);
 };
 
 export const deleteGroup = async (props: { groupID: string }) => {
   const db = await initDb();
   const endpoints = await queryEndpoints({ groupID: props.groupID });
   await Promise.all(
-    endpoints.map((endpoint) => deleteEndpoint({ endpointID: endpoint.EndpointID })),
+    endpoints.map((endpoint) =>
+      deleteEndpoint({ endpointID: endpoint.EndpointID }),
+    ),
   );
   await db.execute('DELETE FROM Endpoints WHERE GroupID = ?', [props.groupID]);
-  await db.execute('DELETE FROM EndpointsGroups WHERE GroupID = ?', [props.groupID]);
+  await db.execute('DELETE FROM EndpointsGroups WHERE GroupID = ?', [
+    props.groupID,
+  ]);
 };
 
 export const handleSelectEndpoint = async (props: { endpointID: string }) => {
@@ -1368,7 +1492,10 @@ export const handleSelectEndpoint = async (props: { endpointID: string }) => {
 
 export const queryLog = async (props: { userID: string }) => {
   const db = await initDb();
-  const res = await db.select<Types.Log[]>(`SELECT * FROM Log WHERE UserID = ?`, [props.userID]);
+  const res = await db.select<Types.Log[]>(
+    `SELECT * FROM Log WHERE UserID = ?`,
+    [props.userID],
+  );
   return res[0];
 };
 
@@ -1390,12 +1517,15 @@ export const queryAutoCheckUpdate = async (props: { userID: string }) => {
   return res[0].AutoDownloadAndInstallUpgrades === 1;
 };
 
-export const updateAutoCheckUpdate = async (props: { userID: string; autoCheckUpdate: boolean }) => {
+export const updateAutoCheckUpdate = async (props: {
+  userID: string;
+  autoCheckUpdate: boolean;
+}) => {
   const db = await initDb();
-  await db.execute(`UPDATE AppSettings SET AutoDownloadAndInstallUpgrades = ? WHERE UserID = ?`, [
-    props.autoCheckUpdate ? 1 : 0,
-    props.userID,
-  ]);
+  await db.execute(
+    `UPDATE AppSettings SET AutoDownloadAndInstallUpgrades = ? WHERE UserID = ?`,
+    [props.autoCheckUpdate ? 1 : 0, props.userID],
+  );
 };
 
 export { Types };

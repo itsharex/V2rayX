@@ -1,15 +1,18 @@
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image } from '@nextui-org/react';
-import { Listbox, ListboxItem } from '@nextui-org/react';
-import { Select, SelectItem } from '@nextui-org/react';
-import { Checkbox } from '@nextui-org/checkbox';
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Listbox,
+  ListboxItem,
+  Select,
+  SelectItem,
+  Chip,
+} from '@nextui-org/react';
 import { Switch } from '@nextui-org/switch';
-import { Chip } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
 import { Tooltip } from '@nextui-org/tooltip';
 import { useTranslation } from 'react-i18next';
 import { queryGeneralSettings, updateGeneralSettings, Types } from '~/api';
 import { useLoaderData, useRevalidator } from '@remix-run/react';
-import * as _ from 'lodash';
 
 export const loader = async () => {
   const userID = localStorage.getItem('userID')!;
@@ -194,7 +197,10 @@ export const Page = () => {
                 </Select>
               </div>
             </ListboxItem>
-            <ListboxItem key="applicationLogsFolder" textValue="applicationLogsFolder">
+            <ListboxItem
+              key="applicationLogsFolder"
+              textValue="applicationLogsFolder"
+            >
               <Tooltip
                 content={t(
                   'The Applicaion data generates every day with tags on it. You can check it or attach it for issue description on Github',
@@ -240,12 +246,17 @@ export const Page = () => {
                   }}
                 >
                   {logLevels.map((v) => (
-                    <SelectItem key={v.key}>{v.key + ': ' + t(v.explanation)}</SelectItem>
+                    <SelectItem key={v.key}>
+                      {v.key + ': ' + t(v.explanation)}
+                    </SelectItem>
                   ))}
                 </Select>
               </div>
             </ListboxItem>
-            <ListboxItem key="v2rayAccessLogsPath" textValue="v2rayAccessLogsPath">
+            <ListboxItem
+              key="v2rayAccessLogsPath"
+              textValue="v2rayAccessLogsPath"
+            >
               <Tooltip
                 content={t(
                   'Tracks all connection activities, including IP addresses, timestamps, and data transferred',
@@ -257,9 +268,14 @@ export const Page = () => {
                 </div>
               </Tooltip>
             </ListboxItem>
-            <ListboxItem key="v2rayErrorLogsPath" textValue="v2rayErrorLogsPath">
+            <ListboxItem
+              key="v2rayErrorLogsPath"
+              textValue="v2rayErrorLogsPath"
+            >
               <Tooltip
-                content={t('Logs any errors or issues V2Ray encounters, useful for troubleshooting')}
+                content={t(
+                  'Logs any errors or issues V2Ray encounters, useful for troubleshooting',
+                )}
               >
                 <div className="flex flex-row items-center justify-between">
                   <div>{t('V2ray Error Logs Path')}</div>

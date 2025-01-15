@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { Protocol } from './protocol-new';
-import { decode, encode } from 'js-base64';
 
 export interface Hysteria2Type {
   host: string;
@@ -90,7 +89,10 @@ export class Hysteria2 extends Protocol {
       insecure: queryParams.get('insecure') === '1',
       up_mbps: parseFloat(queryParams.get('up_mbps') || '10'),
       down_mbps: parseFloat(queryParams.get('down_mbps') || '50'),
-      recv_window_conn: _.parseInt(queryParams.get('recv_window_conn') || '0', 10),
+      recv_window_conn: _.parseInt(
+        queryParams.get('recv_window_conn') || '0',
+        10,
+      ),
       recv_window: _.parseInt(queryParams.get('recv_window') || '0', 10),
       obfs: queryParams.get('obfs') || '',
       disable_mtu_discovery: queryParams.get('disable_mtu_discovery') === '1',

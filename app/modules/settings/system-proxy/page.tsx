@@ -2,21 +2,9 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
-  Divider,
-  Link,
-  Image,
-  Button,
+  Listbox,
+  ListboxItem,
 } from '@nextui-org/react';
-import { Listbox, ListboxItem } from '@nextui-org/react';
-import { Select, SelectItem } from '@nextui-org/react';
-import { Checkbox } from '@nextui-org/checkbox';
-import { Switch } from '@nextui-org/switch';
-import { Chip } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
-import { Tooltip } from '@nextui-org/tooltip';
-import { Tabs, Tab } from '@nextui-org/react';
-import { Textarea } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 import * as PAC from './pac/page';
 import * as Bypass from './bypass/page';
@@ -38,7 +26,10 @@ export const Page = () => {
         </CardHeader>
         <CardBody className="overflow-visible py-2">
           <Listbox aria-label="Actions">
-            <ListboxItem key="Bypass Domain/IPNet" textValue="Bypass Domain/IPNet">
+            <ListboxItem
+              key="Bypass Domain/IPNet"
+              textValue="Bypass Domain/IPNet"
+            >
               <div className="flex flex-row items-center justify-between">
                 <div>{t('Bypass Domain/IPNet')}</div>
                 <Bypass.Page />

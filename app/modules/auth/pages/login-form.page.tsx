@@ -5,7 +5,6 @@ import { useNavigate } from '@remix-run/react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import toast from 'react-hot-toast';
 
 interface LoginFormProps {
   error?: string;
@@ -41,7 +40,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ error }) => {
         <h2 className="text-xl font-bold uppercase">Login</h2>
       </CardHeader>
       <CardBody>
-        <form method="post" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form
+          method="post"
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-4"
+        >
           <Controller
             name="username"
             control={control}
@@ -91,7 +94,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ error }) => {
             <Button type="submit" color="primary">
               Login
             </Button>
-            <Button type="button" onPress={() => navigate('/signup')} color="secondary">
+            <Button
+              type="button"
+              onPress={() => navigate('/signup')}
+              color="secondary"
+            >
               Register
             </Button>
           </div>

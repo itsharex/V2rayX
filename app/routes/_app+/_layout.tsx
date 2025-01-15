@@ -1,8 +1,6 @@
-import { Outlet, redirect } from '@remix-run/react';
+import { Outlet, redirect, json, useLoaderData } from '@remix-run/react';
 import * as NavBar from '~/modules/base/nav/main-nav';
 import { queryUser } from '~/api';
-import { useNavigate, Link, json, useLoaderData } from '@remix-run/react';
-import toast from 'react-hot-toast';
 
 export const clientLoader = async () => {
   try {

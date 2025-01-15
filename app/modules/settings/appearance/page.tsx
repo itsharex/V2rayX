@@ -1,12 +1,16 @@
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image } from '@nextui-org/react';
-import { Listbox, ListboxItem } from '@nextui-org/react';
-import { Select, SelectItem } from '@nextui-org/react';
-import { Checkbox } from '@nextui-org/checkbox';
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Listbox,
+  ListboxItem,
+  Select,
+  SelectItem,
+  Tabs,
+  Tab,
+} from '@nextui-org/react';
 import { Switch } from '@nextui-org/switch';
-import { Chip } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
 import { Tooltip } from '@nextui-org/tooltip';
-import { Tabs, Tab } from '@nextui-org/react';
 import { useTheme } from '@nextui-org/use-theme';
 import SystemThemeManager from '~/utils/theme.util';
 
@@ -74,7 +78,11 @@ export const Page = () => {
                       }
                       updateAppearance({
                         userID,
-                        appearance: { theme: v as 'light' | 'dark' | 'system', font, hideTrayBar },
+                        appearance: {
+                          theme: v as 'light' | 'dark' | 'system',
+                          font,
+                          hideTrayBar,
+                        },
                       });
                       revalidator.revalidate();
                     }}
@@ -100,7 +108,11 @@ export const Page = () => {
                     if (e.target.value !== '') {
                       await updateAppearance({
                         userID,
-                        appearance: { theme, font: e.target.value, hideTrayBar },
+                        appearance: {
+                          theme,
+                          font: e.target.value,
+                          hideTrayBar,
+                        },
                       });
                       document.body.style.fontFamily = `${e.target.value === 'sans-serif' ? '' : e.target.value + ','} NotoSansSC, sans-serif`;
                       revalidator.revalidate();
@@ -116,7 +128,11 @@ export const Page = () => {
               </div>
             </ListboxItem>
             <ListboxItem key="hideBar" textValue="hidenBar">
-              <Tooltip content={t('Hide tray bar will not let program running in backgroud')}>
+              <Tooltip
+                content={t(
+                  'Hide tray bar will not let program running in backgroud',
+                )}
+              >
                 <div className="flex flex-row items-center justify-between">
                   <div>{t('Hide Tray Bar')}</div>
                   <Switch

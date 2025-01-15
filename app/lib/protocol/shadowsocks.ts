@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Protocol } from './protocol-new';
-import { decode, encode } from 'js-base64';
+import { decode } from 'js-base64';
 
 // {
 //     "email": "love@v2ray.com",
@@ -127,7 +127,10 @@ export class Shadowsocks extends Protocol {
 
   genPs() {
     if (!this.getPs()) {
-      this.ps = this.shareLinkParseData.tag || this.outbound?.settings?.servers?.[0]?.address || '';
+      this.ps =
+        this.shareLinkParseData.tag ||
+        this.outbound?.settings?.servers?.[0]?.address ||
+        '';
     } else {
       this.ps = this.getPs();
     }
@@ -172,7 +175,10 @@ export class Shadowsocks extends Protocol {
     this.updateOutbound();
   }
 
-  genStreamSettings(type: 'tcp' | 'kcp' | 'ws' | 'h2' | 'quic' | 'grpc', obj: any) {
+  genStreamSettings(
+    type: 'tcp' | 'kcp' | 'ws' | 'h2' | 'quic' | 'grpc',
+    obj: any,
+  ) {
     const settingKey = `${type === 'h2' ? 'http' : type}Settings`;
     this.streamSettings[settingKey] = obj;
     this.updateOutbound();

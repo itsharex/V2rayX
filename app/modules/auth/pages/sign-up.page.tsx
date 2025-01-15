@@ -4,7 +4,6 @@ import { useNavigate } from '@remix-run/react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import toast from 'react-hot-toast';
 
 interface SignupFormProps {
   error?: string;
@@ -14,7 +13,9 @@ const SignupSchema = z
   .object({
     username: z.string().min(1, { message: 'Username is required' }),
     password: z.string().min(6, { message: 'Use a minimum of 6 characters' }),
-    confirmPassword: z.string().min(1, { message: 'Confirm password is required' }),
+    confirmPassword: z
+      .string()
+      .min(1, { message: 'Confirm password is required' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -45,7 +46,11 @@ export const SignupForm: React.FC<SignupFormProps> = ({ error }) => {
         <h2 className="text-xl font-bold uppercase">Register</h2>
       </CardHeader>
       <CardBody>
-        <form method="post" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form
+          method="post"
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-4"
+        >
           <Controller
             name="username"
             control={control}
@@ -96,7 +101,11 @@ export const SignupForm: React.FC<SignupFormProps> = ({ error }) => {
             <Button type="submit" color="primary">
               Register
             </Button>
-            <Button type="button" onPress={() => navigate('/login')} color="secondary">
+            <Button
+              type="button"
+              onPress={() => navigate('/login')}
+              color="secondary"
+            >
               Back
             </Button>
           </div>

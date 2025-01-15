@@ -9,7 +9,7 @@
 
 [● Telegram Channel](https://t.me/V2rayX_electron)
 
-## I. V2ray Electron
+## I. V2ray Tauri
 
 V2ray GUI client with cross-platform desktop support powered by Tauri, made especially for Linux / Windows / MacOS users.
 
@@ -57,7 +57,8 @@ V2ray GUI client with cross-platform desktop support powered by Tauri, made espe
 - [x] Clipboard
 - [ ] QR-code Import
 - [ ] Subscription Import
-- [x] Language Detecting And Switching (zh-CN / en-US / ru-RU)
+- [x] Language Switching Chinese (zh-CN) / English (en-US) / Russian (ru-RU) / Spanish (es-ES) / French (fr-FR) / German (de-DE) / Japanese (ja-JP) / Korean (ko-KR) / Farsi (fa-IR)
+
 - [ ] Configuration Backup / Recovery
 - [x] Dark / Light Mode
 - [x] Auto Start (Not supported on Linux)
@@ -75,52 +76,51 @@ V2ray GUI client with cross-platform desktop support powered by Tauri, made espe
 
 ## IV. Supported Platforms & Arch
 
-![system](https://img.shields.io/badge/system-win%20%7C%20mac%20%7C%20linux-green) [![Publish](https://github.com/shaonhuang/V2rayX/actions/workflows/publish.yml/badge.svg)](https://github.com/shaonhuang/V2rayX/actions/workflows/publish.yml)
+![system](https://img.shields.io/badge/system-win%20%7C%20mac%20%7C%20linux-green) [![Release](https://github.com/shaonhuang/V2rayX/actions/workflows/release.yml/badge.svg)](https://github.com/shaonhuang/V2rayX/actions/workflows/release.yml)
 
 > More architectures will be supported if necessary, just give me an issue.
 
 - Ubuntu
 
-  - deb `x64/arm64` (arm64 Coming Soon)
+  - deb `x64/arm64`
   - pacman `x64/arm64` (Coming Soon)
   - AppImage `x64/arm64` (arm64 Coming Soon)
-  - rpm `x64/arm64` (arm64 Coming Soon)
-  - snap `x64/arm64(Easy Intall On SnapStore)` (Coming Soon)
+  - rpm `x64/arm64`
+  - snap `x64/arm64/armhf (Easy Intall On SnapStore)` (Not tested. Please give me feedback.Try it on arm64 it's have the problem related to OS.Though it could package on arm64)
 
 - MacOS (M1+, Intel)
 
-  - dmg `x64/arm64` (arm64 Coming Soon)
+  - dmg `x64/arm64`
   - zip `x64/arm64`
 
 - Windows 10/11
-  - exe `x64/arm64` (arm64 Coming Soon)
-  - msi `x64/arm64` (arm64 Coming Soon)
-  - zip `x64/arm64` (arm64 Coming Soon)
+  - exe `x64/arm64`
+  - msi `x64/arm64`
 
 ## V. Screenshots
-
-### For MacOS (v0.3.3 style) (v0.4.0+ is like Windows style.)
 
 #### Home Page
 
 ![home.png](./assets/home-mac.png)
+
 ![home.dark.png](./assets/home-mac.dark.png)
 
 #### Server Page
 
-![server.png](./assets/endpoints-mac.png)
-
+![server.png](./assets/endpoints-linux.png)
 
 #### Server Add
 
-![add-server.png](./assets/import-mac.png)
-![add-server.png](./assets/manual-mac.png)
+![add-server.png](./assets/add-endpoint-mac.png)
+
+![delete-group.png](./assets/delete-group-mac.png)
 
 #### Settings Page
 
 ##### Windows 11
 
 ![settings-windows.png](./assets/setting-windows.png)
+
 ![settings-mac.png](./assets/setting-mac.png)
 
 #### Logs Page
@@ -135,10 +135,12 @@ V2ray GUI client with cross-platform desktop support powered by Tauri, made espe
 
 ![addServer.png](./assets/add-endpoint.png)
 
-
 #### Tray Tool Bar
 
 ![trayBar.png](./assets/tray-linux.png)
+
+![trayBar-mac.png](./assets/tray-mac.png)
+
 ![misc.png](./assets/misc.png)
 
 ## VI. Downloads
@@ -148,7 +150,7 @@ V2ray GUI client with cross-platform desktop support powered by Tauri, made espe
   - ![statistics](https://img.shields.io/github/downloads/shaonhuang/V2rayX/total?style=plastic)
   - [↪ releases page](https://github.com/shaonhuang/V2rayX/releases/latest)
 
-- Snapcraft Store (Linux) (Coming Soon)
+- Snapcraft Store (Linux)
 
   - [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/v2rayx)
   - [↪ home page](https://snapcraft.io/v2rayx)
@@ -174,7 +176,7 @@ Life is hard. Maybe a coffee would help.❤️❤️🙏🙏💪💪
 - Node@^`18.17.0`
 - Ubuntu18.04 or higher version
 - Mac Catalina or other versions (works in most recent versions in theory)
-- Windows 10 (WSL tested) or higher version
+- Windows 10 or higher version
 
 ### 2. Prepare
 
@@ -200,10 +202,13 @@ $: npm i -g pnpm
 # [03]pnpm install
 $: pnpm install
 
-# [04]touch .env; The content of variables they are not matter but have to have it to run dev.
-$:printf "VITE_V2RAY_CORE_VERSION=5.24.0\nVITE_APP_VERSION=0.5.0\nSENTRY_DSN=\n" > .env
+# [04]pnpm install
+$: pnpm check
 
-# [05]dev
+# [05]touch .env; The content of variables they are not matter but have to have it to run dev.
+$:printf "SENTRY_DSN=\n" > .env
+
+# [06]dev
 $: pnpm tauri:dev
 ```
 

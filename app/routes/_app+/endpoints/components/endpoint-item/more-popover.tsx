@@ -1,10 +1,13 @@
-import { Popover, PopoverTrigger, PopoverContent, Button, Input } from '@nextui-org/react';
-import { Listbox, ListboxSection, ListboxItem } from '@nextui-org/listbox';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Button,
+} from '@nextui-org/react';
 import * as Edit from '../endpoint-edit/page';
 import { useState } from 'react';
-import { useNavigate } from '@remix-run/react';
+import { useNavigate, useRevalidator } from '@remix-run/react';
 import { deleteEndpoint } from '~/api';
-import { useLoaderData, useRevalidator, useFetcher } from '@remix-run/react';
 import { invoke } from '@tauri-apps/api/core';
 import { useTranslation } from 'react-i18next';
 
@@ -15,7 +18,11 @@ export function MoreButton({ endpointID }: { endpointID: string }) {
   const { t, i18n } = useTranslation();
 
   return (
-    <Popover placement="top" isOpen={isOpen} onOpenChange={(open) => setIsOpen(open)}>
+    <Popover
+      placement="top"
+      isOpen={isOpen}
+      onOpenChange={(open) => setIsOpen(open)}
+    >
       <PopoverTrigger>
         <Button onPress={() => setIsOpen(true)}>
           <span className="i-mdi-dots-horizontal" />

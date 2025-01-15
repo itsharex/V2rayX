@@ -1,39 +1,14 @@
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Divider,
-  Link,
-  Image,
-  Button,
-} from '@nextui-org/react';
-import { Listbox, ListboxItem } from '@nextui-org/react';
-import { Select, SelectItem } from '@nextui-org/react';
+import { Card, CardBody, Input } from '@nextui-org/react';
 import { Checkbox } from '@nextui-org/checkbox';
-import { Switch } from '@nextui-org/switch';
-import { Chip } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
-import { Tooltip } from '@nextui-org/tooltip';
-import { Tabs, Tab } from '@nextui-org/react';
-import { Textarea } from '@nextui-org/react';
-import { useTranslation } from 'react-i18next';
-import { Navigate } from '@remix-run/react';
-import { useNavigate } from '@remix-run/react';
 import {
   Controller,
-  type FieldErrors,
   useForm,
   SubmitHandler,
   UseFormSetValue,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import toast, { Toaster } from 'react-hot-toast';
 import {
-  ReactNode,
-  useEffect,
-  useState,
   useImperativeHandle,
   forwardRef,
   ForwardRefRenderFunction,
@@ -61,7 +36,10 @@ export interface PageRef {
   setFormValue: UseFormSetValue<SecuritySchema>;
 }
 
-const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref) => {
+const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (
+  props,
+  ref,
+) => {
   const {
     register,
     handleSubmit,
@@ -117,7 +95,10 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
   return (
     <Card>
       <CardBody>
-        <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4">
+        <form
+          onSubmit={handleSubmit(onSubmit, onError)}
+          className="flex flex-col gap-4"
+        >
           <p>Security</p>
           <Controller
             name="endpointID"
@@ -125,7 +106,9 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
             render={({
               field: { name, value, onChange, onBlur, ref },
               fieldState: { invalid, error },
-            }) => <Input ref={ref} name={name} type="text" className="hidden" />}
+            }) => (
+              <Input ref={ref} name={name} type="text" className="hidden" />
+            )}
           />
           <div className="flex flex-row items-center gap-4">
             <Controller

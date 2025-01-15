@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 // Ensure that MonacoEnvironment is defined only once
 if (typeof self !== 'undefined' && !self.MonacoEnvironment) {
@@ -13,7 +13,10 @@ if (typeof self !== 'undefined' && !self.MonacoEnvironment) {
 
       switch (label) {
         case 'json':
-          return getWorkerModule('monaco-editor/esm/vs/language/json/json.worker?worker', label);
+          return getWorkerModule(
+            'monaco-editor/esm/vs/language/json/json.worker?worker',
+            label,
+          );
         // Uncomment and add other cases as needed
         // case 'css':
         // case 'scss':
@@ -36,7 +39,10 @@ if (typeof self !== 'undefined' && !self.MonacoEnvironment) {
         //     label
         //   );
         default:
-          return getWorkerModule('monaco-editor/esm/vs/editor/editor.worker?worker', label);
+          return getWorkerModule(
+            'monaco-editor/esm/vs/editor/editor.worker?worker',
+            label,
+          );
       }
     },
   };

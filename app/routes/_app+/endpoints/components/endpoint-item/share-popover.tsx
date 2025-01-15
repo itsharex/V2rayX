@@ -1,7 +1,10 @@
-import { Popover, PopoverTrigger, PopoverContent, Button, Input } from '@nextui-org/react';
-import { Listbox, ListboxSection, ListboxItem } from '@nextui-org/listbox';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Button,
+} from '@nextui-org/react';
 import * as Share from '../endpoint-share/page';
-import * as Edit from '../endpoint-edit/page';
 import { useState } from 'react';
 import { useNavigate } from '@remix-run/react';
 
@@ -10,7 +13,11 @@ export function ShareButton() {
   const navigate = useNavigate();
 
   return (
-    <Popover placement="top" isOpen={isOpen} onOpenChange={(open) => setIsOpen(open)}>
+    <Popover
+      placement="top"
+      isOpen={isOpen}
+      onOpenChange={(open) => setIsOpen(open)}
+    >
       <PopoverTrigger>
         <Button onPress={() => setIsOpen(true)} isDisabled>
           <span className="i-feather-share-2" />

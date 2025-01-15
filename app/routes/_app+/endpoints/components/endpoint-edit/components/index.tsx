@@ -1,42 +1,31 @@
 import {
   Card,
-  CardHeader,
   CardBody,
-  CardFooter,
-  Divider,
-  Link,
-  Image,
   Button,
+  Select,
+  SelectItem,
+  Input,
 } from '@nextui-org/react';
-import { Listbox, ListboxItem } from '@nextui-org/react';
-import { Select, SelectItem } from '@nextui-org/react';
-import { Checkbox } from '@nextui-org/checkbox';
-import { Switch } from '@nextui-org/switch';
-import { Chip } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
-import { Tooltip } from '@nextui-org/tooltip';
-import { Tabs, Tab } from '@nextui-org/react';
-import { Textarea } from '@nextui-org/react';
-import { useTranslation } from 'react-i18next';
-import { Navigate } from '@remix-run/react';
-import { useNavigate } from '@remix-run/react';
-import { Controller, type FieldErrors, useForm, SubmitHandler } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import {
-  ReactNode,
   useRef,
   useEffect,
   useState,
   useImperativeHandle,
   forwardRef,
   ForwardRefRenderFunction,
-  useLayoutEffect,
 } from 'react';
 import { addEndpointToLocalsBaseInfo } from '~/api';
 import { Shadowsocks, VMess, Trojan, Hysteria2 } from './protocols';
-import { Tcp, Kcp, H2, Quic, Ws, Grpc, Hysteria2 as Hysteria2Stream } from './stream';
+import {
+  Tcp,
+  Kcp,
+  H2,
+  Quic,
+  Ws,
+  Grpc,
+  Hysteria2 as Hysteria2Stream,
+} from './stream';
 import { SecurityTls } from './security';
 
 import {
@@ -45,19 +34,22 @@ import {
   Shadowsocks as ShadowsocksData,
   Hysteria2 as Hysteria2Data,
 } from '~/lib/protocol';
-import { uniqueId } from 'lodash';
 import { v7 as uuid } from 'uuid';
 import { t } from 'i18next';
 
-const protocolsTypes = ['shadowsocks', 'vmess', 'trojan', 'hysteria2'].map((protocol) => ({
-  key: protocol,
-  label: protocol.toUpperCase(),
-}));
+const protocolsTypes = ['shadowsocks', 'vmess', 'trojan', 'hysteria2'].map(
+  (protocol) => ({
+    key: protocol,
+    label: protocol.toUpperCase(),
+  }),
+);
 
-const networks = ['h2', 'kcp', 'quic', 'tcp', 'ws', 'grpc', 'hysteria2'].map((network) => ({
-  key: network,
-  label: network.toUpperCase(),
-}));
+const networks = ['h2', 'kcp', 'quic', 'tcp', 'ws', 'grpc', 'hysteria2'].map(
+  (network) => ({
+    key: network,
+    label: network.toUpperCase(),
+  }),
+);
 
 const securityTypes = ['none', 'tls'].map((security) => ({
   key: security,
@@ -91,7 +83,10 @@ export interface PageRef {
   // setFormValue: UseFormSetValue<ShadowsocksSchema>;
 }
 
-const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref) => {
+const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (
+  props,
+  ref,
+) => {
   const { type, endpoint } = props;
   let link = '';
   const [endpointID] = useState(type === 'add' ? uuid() : endpoint.endpointID);
@@ -112,7 +107,9 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
   const scheduleDisplay = useEffectOnNextRender(() => {
     display();
   });
-  const [protocolFactory, setProtocolFactory] = useState<any>(new VMessData(''));
+  const [protocolFactory, setProtocolFactory] = useState<any>(
+    new VMessData(''),
+  );
 
   useEffect(() => {
     protocolRef.current?.setFormValue('endpointID', endpointID);
@@ -165,7 +162,8 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
     password: string;
     encryptionAlgorithm: string;
   }) => {
-    const shadowsocksPageRef = protocolRef.current as Shadowsocks.PageRef | null;
+    const shadowsocksPageRef =
+      protocolRef.current as Shadowsocks.PageRef | null;
     if (!shadowsocksPageRef) {
       console.warn('Shadowsocks PageRef is null');
       return;
@@ -216,7 +214,15 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
   };
 
   // 3. Handle Trojan
-  const handleTrojan = ({ ip, port, password }: { ip: string; port: number; password: string }) => {
+  const handleTrojan = ({
+    ip,
+    port,
+    password,
+  }: {
+    ip: string;
+    port: number;
+    password: string;
+  }) => {
     const trojanPageRef = protocolRef.current as Trojan.PageRef | null;
     if (!trojanPageRef) {
       console.warn('Trojan PageRef is null');
@@ -233,7 +239,13 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
   };
 
   // 4. Handle Hysteria2
-  const handleHysteria2 = ({ address, port }: { address: string; port: number }) => {
+  const handleHysteria2 = ({
+    address,
+    port,
+  }: {
+    address: string;
+    port: number;
+  }) => {
     const hysteria2PageRef = protocolRef.current as Hysteria2.PageRef | null;
     if (!hysteria2PageRef) {
       console.warn('Hysteria2 PageRef is null');
@@ -399,7 +411,8 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
     downloadSpeed: number;
     enableUDP: number;
   }) => {
-    const hysteria2StreamRef = streamRef.current as Hysteria2Stream.PageRef | null;
+    const hysteria2StreamRef =
+      streamRef.current as Hysteria2Stream.PageRef | null;
     if (!hysteria2StreamRef) {
       console.warn('Hysteria2 Stream PageRef is null');
       return;
@@ -469,7 +482,8 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
       setProcotols({
         protocol,
         stream: protocolFactory.getOutbound().streamSettings?.network || 'tcp',
-        security: protocolFactory.getOutbound().streamSettings?.security || 'none',
+        security:
+          protocolFactory.getOutbound().streamSettings?.security || 'none',
       });
 
       scheduleDisplay();
@@ -477,7 +491,9 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
       toast.success(t('URL imported'));
     } catch (error) {
       console.error(error);
-      toast.error('Invalid URL or parsing error. Please report link format to developer.');
+      toast.error(
+        'Invalid URL or parsing error. Please report link format to developer.',
+      );
     }
   };
 
@@ -489,11 +505,17 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
             ? {
                 ip: protocolFactory.getOutbound().settings.vnext[0].address,
                 port: protocolFactory.getOutbound().settings.vnext[0].port,
-                uuid: protocolFactory.getOutbound().settings.vnext[0].users[0].id,
-                alterID: protocolFactory.getOutbound().settings.vnext[0].users[0].alterId,
-                level: protocolFactory.getOutbound().settings.vnext[0].users[0].level,
+                uuid: protocolFactory.getOutbound().settings.vnext[0].users[0]
+                  .id,
+                alterID:
+                  protocolFactory.getOutbound().settings.vnext[0].users[0]
+                    .alterId,
+                level:
+                  protocolFactory.getOutbound().settings.vnext[0].users[0]
+                    .level,
                 encryptionAlgorithm:
-                  protocolFactory.getOutbound().settings.vnext[0].users[0].security,
+                  protocolFactory.getOutbound().settings.vnext[0].users[0]
+                    .security,
               }
             : {
                 ip: endpoint.protocol.Address,
@@ -509,10 +531,13 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         handleShadowsocks(
           type === 'add'
             ? {
-                address: protocolFactory.getOutbound().settings.servers[0].address,
+                address:
+                  protocolFactory.getOutbound().settings.servers[0].address,
                 port: protocolFactory.getOutbound().settings.servers[0].port,
-                password: protocolFactory.getOutbound().settings.servers[0].password,
-                encryptionAlgorithm: protocolFactory.getOutbound().settings.servers[0].method,
+                password:
+                  protocolFactory.getOutbound().settings.servers[0].password,
+                encryptionAlgorithm:
+                  protocolFactory.getOutbound().settings.servers[0].method,
               }
             : {
                 address: endpoint.protocol.Address,
@@ -528,7 +553,8 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
             ? {
                 ip: protocolFactory.getOutbound().settings.servers[0].address,
                 port: protocolFactory.getOutbound().settings.servers[0].port,
-                password: protocolFactory.getOutbound().settings.servers[0].password,
+                password:
+                  protocolFactory.getOutbound().settings.servers[0].password,
               }
             : {
                 ip: endpoint.protocol.Address,
@@ -541,7 +567,8 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         handleHysteria2(
           type === 'add'
             ? {
-                address: protocolFactory.getOutbound().settings.servers[0].address,
+                address:
+                  protocolFactory.getOutbound().settings.servers[0].address,
                 port: protocolFactory.getOutbound().settings.servers[0].port,
               }
             : {
@@ -558,15 +585,19 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         handleTcp(
           type === 'add'
             ? {
-                type: protocolFactory.getOutbound().streamSettings.tcpSettings.header.type,
+                type: protocolFactory.getOutbound().streamSettings.tcpSettings
+                  .header.type,
                 requestHost:
-                  protocolFactory.getOutbound().streamSettings.tcpSettings.header.type === 'http'
-                    ? protocolFactory.getOutbound().streamSettings.tcpSettings.header.request.headers
-                        .Host[0]
+                  protocolFactory.getOutbound().streamSettings.tcpSettings
+                    .header.type === 'http'
+                    ? protocolFactory.getOutbound().streamSettings.tcpSettings
+                        .header.request.headers.Host[0]
                     : null,
                 requestPath:
-                  protocolFactory.getOutbound().streamSettings.tcpSettings.header.type === 'http'
-                    ? protocolFactory.getOutbound().streamSettings.tcpSettings.header.request.path[0]
+                  protocolFactory.getOutbound().streamSettings.tcpSettings
+                    .header.type === 'http'
+                    ? protocolFactory.getOutbound().streamSettings.tcpSettings
+                        .header.request.path[0]
                     : null,
               }
             : {
@@ -580,8 +611,10 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         handleWs(
           type === 'add'
             ? {
-                path: protocolFactory.getOutbound().streamSettings.wsSettings.path,
-                host: protocolFactory.getOutbound().streamSettings.wsSettings.headers.host,
+                path: protocolFactory.getOutbound().streamSettings.wsSettings
+                  .path,
+                host: protocolFactory.getOutbound().streamSettings.wsSettings
+                  .headers.host,
               }
             : {
                 path: endpoint.network.Path,
@@ -593,7 +626,9 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         handleGrpc(
           type === 'add'
             ? {
-                serviceName: protocolFactory.getOutbound().streamSettings.grpcSettings.serviceName,
+                serviceName:
+                  protocolFactory.getOutbound().streamSettings.grpcSettings
+                    .serviceName,
               }
             : {
                 serviceName: endpoint.network.ServiceName,
@@ -604,8 +639,10 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         handleH2(
           type === 'add'
             ? {
-                path: protocolFactory.getOutbound().streamSettings.httpSettings.path,
-                host: protocolFactory.getOutbound().streamSettings.httpSettings.host[0],
+                path: protocolFactory.getOutbound().streamSettings.httpSettings
+                  .path,
+                host: protocolFactory.getOutbound().streamSettings.httpSettings
+                  .host[0],
               }
             : {
                 path: endpoint.network.Path,
@@ -617,18 +654,28 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         handleKcp(
           type === 'add'
             ? {
-                header: protocolFactory.getOutbound().streamSettings.kcpSettings.header.type,
-                mtu: protocolFactory.getOutbound().streamSettings.kcpSettings.mtu,
-                tti: protocolFactory.getOutbound().streamSettings.kcpSettings.tti,
+                header:
+                  protocolFactory.getOutbound().streamSettings.kcpSettings
+                    .header.type,
+                mtu: protocolFactory.getOutbound().streamSettings.kcpSettings
+                  .mtu,
+                tti: protocolFactory.getOutbound().streamSettings.kcpSettings
+                  .tti,
                 uplinkCapacity:
-                  protocolFactory.getOutbound().streamSettings.kcpSettings.uplinkCapacity,
+                  protocolFactory.getOutbound().streamSettings.kcpSettings
+                    .uplinkCapacity,
                 downlinkCapacity:
-                  protocolFactory.getOutbound().streamSettings.kcpSettings.downlinkCapacity,
-                congestion: protocolFactory.getOutbound().streamSettings.kcpSettings.congestion,
+                  protocolFactory.getOutbound().streamSettings.kcpSettings
+                    .downlinkCapacity,
+                congestion:
+                  protocolFactory.getOutbound().streamSettings.kcpSettings
+                    .congestion,
                 readBufferSize:
-                  protocolFactory.getOutbound().streamSettings.kcpSettings.readBufferSize,
+                  protocolFactory.getOutbound().streamSettings.kcpSettings
+                    .readBufferSize,
                 writeBufferSize:
-                  protocolFactory.getOutbound().streamSettings.kcpSettings.writeBufferSize,
+                  protocolFactory.getOutbound().streamSettings.kcpSettings
+                    .writeBufferSize,
               }
             : {
                 header: endpoint.network.HeaderType,
@@ -646,9 +693,14 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         handleQuic(
           type === 'add'
             ? {
-                security: protocolFactory.getOutbound().streamSettings.quicSettings.security,
-                key: protocolFactory.getOutbound().streamSettings.quicSettings.key,
-                header: protocolFactory.getOutbound().streamSettings.quicSettings.header.type,
+                security:
+                  protocolFactory.getOutbound().streamSettings.quicSettings
+                    .security,
+                key: protocolFactory.getOutbound().streamSettings.quicSettings
+                  .key,
+                header:
+                  protocolFactory.getOutbound().streamSettings.quicSettings
+                    .header.type,
               }
             : {
                 security: endpoint.network.Security,
@@ -661,13 +713,19 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         handleHysteria2Stream(
           type === 'add'
             ? {
-                password: protocolFactory.getOutbound().streamSettings.hysteria2Settings.password,
-                type: protocolFactory.getOutbound().streamSettings.hysteria2Settings.type,
+                password:
+                  protocolFactory.getOutbound().streamSettings.hysteria2Settings
+                    .password,
+                type: protocolFactory.getOutbound().streamSettings
+                  .hysteria2Settings.type,
                 uploadSpeed:
-                  protocolFactory.getOutbound().streamSettings.hysteria2Settings.uploadSpeed,
+                  protocolFactory.getOutbound().streamSettings.hysteria2Settings
+                    .uploadSpeed,
                 downloadSpeed:
-                  protocolFactory.getOutbound().streamSettings.hysteria2Settings.downloadSpeed,
-                enableUDP: protocolFactory.getOutbound().streamSettings.hysteria2Settings.enableUDP
+                  protocolFactory.getOutbound().streamSettings.hysteria2Settings
+                    .downloadSpeed,
+                enableUDP: protocolFactory.getOutbound().streamSettings
+                  .hysteria2Settings.enableUDP
                   ? 1
                   : 0,
               }
@@ -688,8 +746,11 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         handleTls(
           type === 'add'
             ? {
-                serverName: protocolFactory.getOutbound().streamSettings.tlsSettings.serverName,
-                allowInsecure: protocolFactory.getOutbound().streamSettings.tlsSettings.allowInsecure
+                serverName:
+                  protocolFactory.getOutbound().streamSettings.tlsSettings
+                    .serverName,
+                allowInsecure: protocolFactory.getOutbound().streamSettings
+                  .tlsSettings.allowInsecure
                   ? true
                   : false,
               }
@@ -773,7 +834,8 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         selectedKeys={[protocols.protocol]}
         required
         onChange={(e) => {
-          e.target.value && setProcotols({ ...protocols, protocol: e.target.value });
+          e.target.value &&
+            setProcotols({ ...protocols, protocol: e.target.value });
         }}
       >
         {protocolsTypes.map((protocol) => (
@@ -816,7 +878,8 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         defaultSelectedKeys={['tcp']}
         selectedKeys={[protocols.stream]}
         onChange={(e) => {
-          e.target.value && setProcotols({ ...protocols, stream: e.target.value });
+          e.target.value &&
+            setProcotols({ ...protocols, stream: e.target.value });
         }}
       >
         {networks.map((network) => (
@@ -878,7 +941,8 @@ const PageComponent: ForwardRefRenderFunction<PageRef, PageProps> = (props, ref)
         selectedKeys={[protocols.security]}
         required
         onChange={(e) => {
-          e.target.value && setProcotols({ ...protocols, security: e.target.value });
+          e.target.value &&
+            setProcotols({ ...protocols, security: e.target.value });
         }}
       >
         {securityTypes.map((security) => (
