@@ -36,12 +36,25 @@ const Page = () => {
             <div className="flex flex-row gap-4">
               <Button
                 onPress={async () => {
-                  const res = await checkForAppUpdates(t, true);
-                  if (!res) {
-                    toast.error(
-                      'This software architecture does not support internal auto update.',
-                    );
-                  }
+                  toast.promise(
+                    async () => {
+                      const res = await checkForAppUpdates(t, true);
+                      console.log('res', res);
+                      if (!res) {
+                        toast.error(
+                          'This software architecture does not support internal auto update.',
+                        );
+                      }
+                    },
+                    {
+                      loading: 'Checking for updates...',
+                      success: <b>Checking for updates successed</b>,
+                      error: <b>Checking for updates failed</b>,
+                    },
+                    {
+                      duration: 10000,
+                    },
+                  );
                 }}
                 color="primary"
               >

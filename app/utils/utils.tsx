@@ -11,7 +11,8 @@ export async function checkForAppUpdates(
   t: ReturnType<typeof useTranslation>['t'],
   onUserClick: boolean,
 ): Promise<boolean> {
-  if (UPDATER_ACTIVE) {
+  if (!UPDATER_ACTIVE) return false;
+  try {
     const update = await check();
     if (update === null) {
       await message(
@@ -79,8 +80,13 @@ export async function checkForAppUpdates(
     } else {
       console.log('No update available');
     }
-  } else {
-    return false;
+  } catch (e) {
+    console.error(e);
+    await message(t('Failed to check for updates.\nPlease try again later.'), {
+      title: 'Error',
+      kind: 'error',
+      okLabel: 'OK',
+    });
   }
   return true;
 }

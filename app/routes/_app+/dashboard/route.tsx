@@ -91,7 +91,17 @@ const Page = () => {
     // If we've never checked, or it's been more than 24 hours:
     if (!lastCheckTime || now - parseInt(lastCheckTime, 10) > ONE_DAY_MS) {
       console.log('Checking for updates (once a day)...');
-      checkForAppUpdates(t, false);
+      toast.promise(
+        checkForAppUpdates(t, false),
+        {
+          loading: 'Checking for updates...',
+          success: <b>No updates Stay awesome! 👏</b>,
+          error: <b>Checking for updates failed</b>,
+        },
+        {
+          duration: 20000,
+        },
+      );
       localStorage.setItem('lastCheckTime', now.toString());
     }
   }, [data.autoCheckUpdate, t]);
